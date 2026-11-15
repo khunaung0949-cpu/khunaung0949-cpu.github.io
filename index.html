@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="my">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>သစ်သီး Live Stage</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;background:#090b16;color:white;font-family:Arial,sans-serif}
+header{text-align:center;padding:18px;background:linear-gradient(120deg,#5b1b91,#c52b75)}
+header h2{margin:5px}
+header p{margin:5px;color:#ffe2f4}
+.container{max-width:650px;margin:auto;padding:14px}
+.card{background:#171a2b;border:1px solid #30334b;border-radius:17px;padding:15px;margin:13px 0}
+.stage{height:245px;border-radius:16px;background:radial-gradient(circle,#653a83,#17152c 70%);display:flex;flex-direction:column;align-items:center;justify-content:center;overflow:hidden;position:relative}
+#fruit{font-size:100px;filter:drop-shadow(0 0 15px #ff8bd4)}
+#fruit.dance{animation:dance .6s infinite alternate}
+#fruit.spin{animation:spin 1s linear infinite}
+#fruit.sing{animation:sing .35s infinite alternate}
+#fruit.special{animation:special .7s infinite}
+@keyframes dance{to{transform:rotate(18deg) translateY(-15px) scale(1.15)}}
+@keyframes spin{to{transform:rotate(360deg) scale(1.2)}}
+@keyframes sing{to{transform:scale(1.25) translateY(-10px)}}
+@keyframes special{0%,100%{transform:scale(1)}50%{transform:scale(1.5) rotate(15deg)}}
+#actionText{color:#ffe36b;font-weight:bold;margin-top:12px}
+.stats{display:flex;justify-content:space-around;text-align:center;gap:8px}
+.stats strong{display:block;font-size:22px;color:#ffd66e}
+.characters,.gifts{display:grid;grid-template-columns:repeat(5,1fr);gap:8px}
+button{border:0;border-radius:12px;padding:10px 4px;background:#292d45;color:white;font-size:14px;cursor:pointer}
+button:active{transform:scale(.94)}
+.character{border:1px solid #444967}
+.character.active{background:#7935a6;border:2px solid #ff8ad2}
+.gift{background:#242941;border:1px solid #3d4566;min-height:90px}
+.gift span{display:block;font-size:29px;margin-bottom:5px}
+.gift small{color:#ffd66e}
+.gift:hover{background:#593078}
+#toast{text-align:center;color:#ffb9df;min-height:25px;margin:8px}
+#feed{padding-left:20px;font-size:14px;line-height:1.8}
+#feed li{border-bottom:1px solid #30334b;padding:4px}
+.footer{text-align:center;color:#85899f;padding:20px;font-size:12px}
+@media(max-width:380px){.characters,.gifts{grid-template-columns:repeat(4,1fr)}}
+</style>
+</head>
+<body>
+<header>
+<h2>🍉 သစ်သီး Live Stage</h2>
+<p>🔴 LIVE SHOW · FRUIT CONCERT 2.0</p>
+</header>
+
+<div class="container">
+<div class="card">
+<div class="stats">
+<div>👥 ကြည့်ရှုသူ<strong id="viewers">128</strong></div>
+<div>🪙 စုစုပေါင်း Coin<strong id="total">0</strong></div>
+<div>🎁 လက်ဆောင်<strong id="giftCount">0</strong></div>
+</div>
+</div>
+
+<div class="card">
+<div class="stage" id="stage">
+<div id="fruit">🍓</div>
+<strong id="fruitName">စတော်ဘယ်ရီ</strong>
+<div id="actionText">ဖျော်ဖြေရန် အသင့်ဖြစ်နေသည်</div>
+</div>
+<div id="toast">သစ်သီးဇာတ်ကောင်ကို ရွေးချယ်ပါ ❤️</div>
+</div>
+
+<div class="card">
+<h3>🎭 ဖျော်ဖြေမည့် သစ်သီးရွေးပါ</h3>
+<div class="characters">
+<button class="character active" data-fruit="🍓" data-name="စတော်ဘယ်ရီ">🍓<br>စတော်ဘယ်ရီ</button>
+<button class="character" data-fruit="🍊" data-name="လိမ္မော်သီး">🍊<br>လိမ္မော်သီး</button>
+<button class="character" data-fruit="🍍" data-name="နာနတ်သီး">🍍<br>နာနတ်သီး</button>
+<button class="character" data-fruit="🍉" data-name="ဖရဲသီး">🍉<br>ဖရဲသီး</button>
+<button class="character" data-fruit="🍑" data-name="မက်မွန်သီး">🍑<br>မက်မွန်သီး</button>
+</div>
+</div>
+
+<div class="card">
+<h3>🎁 TikTok LIVE ပုံစံ လက်ဆောင်များ</h3>
+<p style="color:#aeb2c8;font-size:13px">လက်ဆောင်ကိုနှိပ်ပြီး ဖျော်ဖြေမှုကို ကြည့်ပါ။</p>
+<div class="gifts" id="gifts"></div>
+</div>
+
+<div class="card">
+<h3>📜 လက်ဆောင်မှတ်တမ်း</h3>
+<ul id="feed"><li>လက်ဆောင်တစ်ခုကို နှိပ်ပြီး စတင်ပါ။</li></ul>
+</div>
+</div>
+
+<div class="footer">🍉 သစ်သီး Live Stage © 2026 · Demo Prototype</div>
+
+<script>
+const gifts=[
+["🌹","နှင်းဆီ",1,"dance"],
+["👍","လက်မထောင်",5,"dance"],
+["🫰","Finger Heart",5,"dance"],
+["🎂","မွေးနေ့ကိတ်",10,"dance"],
+["💐","ပန်းစည်း",花=100,"dance"],
+["🎵","သီချင်း",100,"sing"],
+["🧸","ဝက်ဝံရုပ်",100,"dance"],
+["💖","အသည်း",199,"sing"],
+["🎮","ဂိမ်းစက်",500,"spin"],
+["🏆","ဆုဖလား",500,"spin"],
+["🎆","မီးရှူးမီးပန်း",1000,"special"],
+["🌌","Galaxy",1000,"special"],
+["🚀","ဒုံးပျံ",2000,"special"],
+["💎","စိန်",5000,"special"],
+["🦋","လိပ်ပြာ",5000,"spin"],
+["🏰","ရဲတိုက်",10000,"special"],
+["🐉","နဂါး",15000,"special"],
+["🦁","ခြင်္သေ့",29999,"special"],
+["🌍","Universe",44999,"special"],
+["👑","သရဖူ",50000,"special"]
+];
+
+let total=0,count=0;
+const giftsBox=document.getElementById("gifts");
+const fruit=document.getElementById("fruit");
+const actionText=document.getElementById("actionText");
+const toast=document.getElementById("toast");
+const feed=document.getElementById("feed");
+
+gifts.forEach((g,i)=>{
+ const b=document.createElement("button");
+ b.className="gift";
+ b.innerHTML=`<span>${g[0]}</span><b>${g[1]}</b><br><small>${g[2].toLocaleString()} Coins</small>`;
+ b.onclick=()=>sendGift(g);
+ giftsBox.appendChild(b);
+});
+
+document.querySelectorAll(".character").forEach(btn=>{
+ btn.onclick=()=>{
+  document.querySelectorAll(".character").forEach(x=>x.classList.remove("active"));
+  btn.classList.add("active");
+  fruit.textContent=btn.dataset.fruit;
+  document.getElementById("fruitName").textContent=btn.dataset.name;
+  actionText.textContent="ဖျော်ဖြေရန် အသင့်ဖြစ်နေသည်";
+  fruit.className="";
+  toast.textContent=btn.dataset.name+" ကို ရွေးချယ်ပြီးပါပြီ ❤️";
+ };
+});
+
+function sendGift(g){
+ total+=g[2];count++;
+ document.getElementById("total").textContent=total.toLocaleString();
+ document.getElementById("giftCount").textContent=count;
+ fruit.className="";
+ void fruit.offsetWidth;
+ fruit.classList.add(g[3]);
+ const actions={dance:"ကခုန်နေသည် 💃",spin:"လှည့်ကနေသည် 🌀",sing:"သီချင်းဆိုနေသည် 🎵",special:"အထူးဖျော်ဖြေနေသည် ✨"};
+ actionText.textContent=actions[g[3]];
+ toast.textContent=g[0]+" "+g[1]+" လက်ဆောင်ရရှိပါပြီ!";
+ const li=document.createElement("li");
+ li.textContent=g[0]+" "+g[1]+" · "+g[2].toLocaleString()+" Coins";
+ feed.prepend(li);
+ if(feed.children.length>12)feed.lastElementChild.remove();
+ setTimeout(()=>{fruit.className="";actionText.textContent="နောက်ထပ်လက်ဆောင်ကို စောင့်နေသည် ❤️"},2500);
+}
+</script>
+
+<style>
+.music-box{background:#20243b;border:1px solid #555070;border-radius:15px;padding:15px;margin:15px 0}
+.music-box button{background:#7436a0;padding:11px 15px;margin:4px}
+.music-box input[type=range]{width:100%;accent-color:#e66bc4}
+.music-box input[type=file]{width:100%;margin:12px 0;color:white}
+.music-box audio{width:100%;margin-top:10px}
+.music-title{color:#ffd66e;font-weight:bold}
+</style>
+
+<div class="card music-box">
+<h3>🎵 သစ်သီး Live Music Studio</h3>
+<p class="music-title">🎼 ကိုယ်ပိုင်နောက်ခံတေးဂီတ</p>
+<p>သစ်သီး Live Stage အတွက် ဖန်တီးထားတဲ့ တေးသွား</p>
+<button onclick="startOriginalMusic()">▶️ သီချင်းဖွင့်မယ်</button>
+<button onclick="stopOriginalMusic()">⏹️ ရပ်မယ်</button>
+
+<hr style="border-color:#444">
+
+<p class="music-title">🎧 ကိုယ်ပိုင် မြန်မာသီချင်းများ</p>
+<p style="font-size:13px;color:#bbb">ဖုန်းထဲရှိ MP3 သီချင်းကို ရွေးချယ်ပါ။</p>
+<input type="file" id="songFile" accept="audio/*">
+<audio id="localMusic" controls></audio>
+
+<p>🔊 အသံအတိုးအကျယ်</p>
+<input type="range" id="musicVolume" min="0" max="100" value="60">
+<div id="musicStatus">သီချင်းရွေးချယ်ရန် အသင့်ဖြစ်နေသည် 🎵</div>
+</div>
+
+<script>
+let musicContext=null;
+let musicTimer=null;
+let musicStep=0;
+let musicGain=null;
+
+const melody=[261.63,329.63,392,329.63,293.66,349.23,440,392];
+
+function startOriginalMusic(){
+ if(musicTimer)return;
+ const AudioCtx=window.AudioContext||window.webkitAudioContext;
+ if(!AudioCtx){alert("ဒီ Browser မှာ အသံဖွင့်မရပါ");return;}
+ if(!musicContext){
+  musicContext=new AudioCtx();
+  musicGain=musicContext.createGain();
+  musicGain.gain.value=Number(document.getElementById("musicVolume").value)/100*0.12;
+  musicGain.connect(musicContext.destination);
+ }
+ musicContext.resume();
+ document.getElementById("musicStatus").textContent="🎶 ကိုယ်ပိုင်တေးသွား ဖွင့်နေသည်";
+ musicTimer=setInterval(()=>{
+  const osc=musicContext.createOscillator();
+  const gain=musicContext.createGain();
+  osc.type="sine";
+  osc.frequency.value=melody[musicStep%melody.length];
+  gain.gain.setValueAtTime(0.0001,musicContext.currentTime);
+  gain.gain.exponentialRampToValueAtTime(0.5,musicContext.currentTime+0.08);
+  gain.gain.exponentialRampToValueAtTime(0.0001,musicContext.currentTime+0.48);
+  osc.connect(gain);
+  gain.connect(musicGain);
+  osc.start();
+  osc.stop(musicContext.currentTime+0.5);
+  musicStep++;
+  if(typeof fruit!=="undefined"){
+   fruit.className="dance";
+   setTimeout(()=>{if(!musicTimer)fruit.className=""},400);
+  }
+ },500);
+}
+
+function stopOriginalMusic(){
+ if(musicTimer){clearInterval(musicTimer);musicTimer=null;}
+ if(musicGain)musicGain.gain.setTargetAtTime(0,musicContext.currentTime,0.05);
+ document.getElementById("musicStatus").textContent="တေးသွား ရပ်ထားသည်";
+ if(typeof fruit!=="undefined")fruit.className="";
+}
+
+document.getElementById("songFile").addEventListener("change",function(){
+ const file=this.files[0];
+ if(!file)return;
+ const player=document.getElementById("localMusic");
+ player.src=URL.createObjectURL(file);
+ player.volume=Number(document.getElementById("musicVolume").value)/100;
+ player.play();
+ document.getElementById("musicStatus").textContent="🎵 "+file.name;
+});
+
+document.getElementById("musicVolume").addEventListener("input",function(){
+ const v=Number(this.value)/100;
+ if(musicGain)musicGain.gain.setTargetAtTime(v*0.12,musicContext.currentTime,0.05);
+ document.getElementById("localMusic").volume=v;
+});
+</script>
+
+</body>
+</html>
